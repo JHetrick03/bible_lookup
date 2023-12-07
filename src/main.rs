@@ -80,8 +80,10 @@ fn main () {
                 chap_found = true;
             }
             // psalm is found?
-            else if book_found && &unwrapped[..psalm_len-1] == psalm {
-                chap_found = true;
+            else if book_found && unwrapped.len() == psalm_len {
+                if &unwrapped[..psalm_len] == psalm {
+                    chap_found = true;
+                }
             }
 
             // checking for verse
