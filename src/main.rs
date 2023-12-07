@@ -43,9 +43,16 @@ fn main () {
         println!("Verse:");
         io::stdin().read_line(&mut verse).expect("Could not read verse");
 
-        book = book.to_uppercase();
+        book = book.trim().to_string().to_uppercase();
+
+        //Checks dictionary. If "book" is an abbreviation, this statement replaces
+        //it with the full book name.
+        if book_abbreviations.contains_key(&book) {
+            let interim_variable = book_abbreviations.get(&book);
+            book = interim_variable.unwrap().to_string();
+        }
+
         book = "THE BOOK OF ".to_owned() + &book;
-        book = book.trim().to_owned();
         
         let mut psalm = "PSALM ".to_owned() + &chapter;
         psalm = psalm.trim().to_owned();
