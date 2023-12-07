@@ -4,6 +4,7 @@ use std::io::BufRead;
 use std::io::BufReader;
 use std::collections::HashMap;
 use std::io::Write;
+use std::thread::yield_now;
 
 fn main () {
 	// println!("Please enter a verse:");
@@ -80,11 +81,15 @@ fn main () {
                 chap_found = true;
             }
             // psalm is found?
-            else if book_found && unwrapped.len() == psalm_len {
-                if &unwrapped[..psalm_len] == psalm {
-                    chap_found = true;
-                }
+            else if book_found && unwrapped == psalm {
+                chap_found = true;
             }
+            
+            // else if book_found && unwrapped.len() == psalm_len {
+            //     if &unwrapped[..psalm_len] == psalm {
+            //         chap_found = true;
+            //     }
+            // }
 
             // checking for verse
             else if chap_found && &unwrapped[..line_verse] == verse {
