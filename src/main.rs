@@ -103,6 +103,9 @@ fn main () {
                 verse_found = true;
                 println!("\nThe verse requested was:");
                 println!("{}", unwrapped);
+                //To do:
+                //Append the verse to verses.txt
+                //Format the terminal output to "pretty print" it
                 break;
             }
 
