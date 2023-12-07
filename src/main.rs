@@ -46,12 +46,16 @@ fn main () {
         book = "THE BOOK OF ".to_owned() + &book;
         book = book.trim().to_owned();
         
-        
-        chapter = chapter.trim().to_owned();
-        let chap_len = chapter.len();
-        chapter = "CHAPTER ".to_owned() + &chapter;
         let mut psalm = "PSALM ".to_owned() + &chapter;
         psalm = psalm.trim().to_owned();
+        let psalm_len = psalm.len();
+
+        chapter = "CHAPTER ".to_owned() + &chapter;
+        chapter = chapter.trim().to_owned();
+        let chap_len = chapter.len();
+
+        verse = verse.trim().to_owned();
+        let line_verse = verse.len();
 
         let bible = File::open("Bible.txt").expect("Failed to open Bible");
         let bible_reader = BufReader::new(bible);
@@ -68,18 +72,35 @@ fn main () {
             if unwrapped == book {
                 book_found = true;
             }
+            else if unwrapped.is_empty() {
+                
+            }
             // chapter is found?
-            else if book_found && &unwrapped[..chap_len-1] == chapter{
+            else if book_found && unwrapped == chapter{
                 chap_found = true;
             }
             // psalm is found?
-            else if book_found && &unwrapped[..chap_len-1] == chapter {
+            else if book_found && &unwrapped[..psalm_len-1] == psalm {
                 chap_found = true;
             }
 
+            // checking for verse
+            else if chap_found && &unwrapped[..line_verse] == verse {
+                verse_found = true;
+                println!("\nThe verse requested was:");
+                println!("{}", unwrapped);
+                break;
+            }
+
             // Error cases
-            else if book_found && !chap_found && &unwrapped[..10] == "THE BOOK OF" {
-                println!("ERROR: This chapter does not exist!");
+            if unwrapped.is_empty() {
+
+            }
+            else if book_found && !chap_found && unwrapped.len() >= 10 {
+                if &unwrapped[..10] == "THE BOOK OF" {
+                    println!("ERROR: This chapter does not exist!");
+                    break;
+                }
             }
             else if chap_found && !verse_found && &unwrapped[..4] == "PSALM" {
                 println!("ERROR: This verse does not exist!");
@@ -89,11 +110,6 @@ fn main () {
                 println!("ERROR: This verse does not exist!");
                 break;
             }
-
-            else if chap_found && &unwrapped[..verse.len()] == verse {
-                verse_found = true;
-                println!("{}", unwrapped);
-            }
         }
         // Book error case
         if !book_found {
@@ -102,11 +118,12 @@ fn main () {
 
         
         // checking if do again
-        println!("Would you like to continue? Y/N ");
+        println!("\nWould you like to continue? Y/N ");
         io::stdout().flush().expect("Could not flush stdout");
 
         let mut input: String = String::new();
         io::stdin().read_line(&mut input).expect("Could not read line");
+        println!();
         
         if input.to_uppercase().starts_with("N") { // neat, much shorter way to check starting character
             return;
