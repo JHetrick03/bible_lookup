@@ -93,24 +93,22 @@ fn main () {
             }
 
             // Error cases
-            if unwrapped.is_empty() {
-
-            }
-            else if book_found && !chap_found && unwrapped.len() >= 10 {
-                if &unwrapped[..10] == "THE BOOK OF" {
+            else if book_found && !chap_found && unwrapped.len() >= 11 {
+                if &unwrapped[..11] == "THE BOOK OF" {
                     println!("ERROR: This chapter does not exist!");
                     break;
                 }
             }
-            else if chap_found && !verse_found && &unwrapped[..4] == "PSALM" {
+            else if chap_found && !verse_found && &unwrapped[..5] == "PSALM" {
                 println!("ERROR: This verse does not exist!");
                 break;
             }
-            else if chap_found && !verse_found && &unwrapped[..6] == "CHAPTER" {
+            else if chap_found && !verse_found && &unwrapped[..7] == "CHAPTER" {
                 println!("ERROR: This verse does not exist!");
                 break;
             }
         }
+
         // Book error case
         if !book_found {
             println!("ERROR: This book does not exist!");
