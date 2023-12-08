@@ -1,3 +1,14 @@
+/**
+ * Description: Looks up a given Bible reference from the user in Bible.txt.
+ *              If the book, chapter, or verse does not exist, such is
+ *              communicated to the user.
+ *              Also prints verses successfully found to verses.txt.
+ *              Finally, asks the user if they want to continue searching
+ *              for more references.
+ * Authors: David Moore & Jeremiah Hetrick
+ * Date: 12/07/2023
+ * Limitations: None
+ */
 use std::fs::File;
 use std::io;
 use std::io::BufRead;
@@ -5,13 +16,13 @@ use std::io::BufReader;
 use std::collections::HashMap;
 use std::io::Write;
 use std::fs::OpenOptions;
-use std::str::SplitWhitespace;
 
 fn main () {
     let mut book_abbreviations: HashMap<String, String> = HashMap::new();
 
     let bible_abbreviations_filename: &str = "Bible_Abbreviations.csv";
-    let file = File::open(bible_abbreviations_filename).expect("Failed to open file");
+    let file = File::open(bible_abbreviations_filename)
+    .expect("Failed to open file");
 
     let mut verse_file = OpenOptions::new().truncate(true).write(true)
     .open("verses.txt").expect("Failed to open verses.txt");
@@ -49,8 +60,8 @@ fn main () {
             book = interim_variable.unwrap().to_string();
         }
 
-        let mut just_book = book.trim().to_owned();
-        let mut just_chapter = chapter.trim().to_owned();
+        let just_book = book.trim().to_owned();
+        let just_chapter = chapter.trim().to_owned();
 
         book = "THE BOOK OF ".to_owned() + &book;
         
@@ -70,33 +81,34 @@ fn main () {
         let mut chap_found = false;
         let mut verse_found = false;
 
-        let mut unwrapped;
+        let mut curr_line;
 
         for line in bible_reader.lines() {
-            unwrapped = line.unwrap_or("Nothing in this line".to_string());
+            curr_line = line.unwrap_or("Nothing in this line".to_string());
             // book is found?
-            if unwrapped == book {
+            if curr_line == book {
                 book_found = true;
             }
-            else if unwrapped.is_empty() {
+            else if curr_line.is_empty() {
                 
             }
             // chapter is found?
-            else if book_found && unwrapped == chapter{
+            else if book_found && curr_line == chapter{
                 chap_found = true;
             }
             // psalm is found?
-            else if book_found && unwrapped == psalm { 
+            else if book_found && curr_line == psalm { 
                 chap_found = true;
             }
             
             // checking for verse
-            else if chap_found && &unwrapped[..line_verse] == verse {
+            else if chap_found && &curr_line[..line_verse] == verse {
                 verse_found = true;
                 println!("\nThe verse requested was:");
-                // println!("{} {}:{}", just_book, just_chapter, unwrapped);
-                prettyprint(just_book.to_owned(),just_chapter.to_owned(),unwrapped.to_owned());
-                write!(verse_file, "{} {}:{}", just_book, just_chapter, unwrapped)
+                // println!("{} {}:{}", just_book, just_chapter, curr_line);
+                prettyprint(just_book.to_owned(),just_chapter
+                .to_owned(),curr_line.to_owned());
+                write!(verse_file, "{} {}:{}", just_book, just_chapter, curr_line)
                 .expect("Error writing to verses.txt");
                 write!(verse_file,"\n").expect("Error writing to verses.txt");
                 //To do:
@@ -105,15 +117,15 @@ fn main () {
             }
 
             // Check for error cases
-            else if book_found && !chap_found && unwrapped.len() >= 11 {
-                if &unwrapped[..11] == "THE BOOK OF" {
+            else if book_found && !chap_found && curr_line.len() >= 11 {
+                if &curr_line[..11] == "THE BOOK OF" {
                     break;
                 }
             }
-            else if chap_found && !verse_found && &unwrapped[..5] == "PSALM" {
+            else if chap_found && !verse_found && &curr_line[..5] == "PSALM" {
                 break;
             }
-            else if chap_found && !verse_found && &unwrapped[..7] == "CHAPTER" {
+            else if chap_found && !verse_found && &curr_line[..7] == "CHAPTER" {
                 break;
             }
         }
@@ -137,16 +149,18 @@ fn main () {
         io::stdin().read_line(&mut input).expect("Could not read line");
         println!();
         
-        if input.to_uppercase().starts_with("N") { // neat, much shorter way to check starting character
+        if input.to_uppercase().starts_with("N") {
             return;
         }
         
     }
 }
 
+// Prints to the screen, limiting lines to 80 characters at most.
+// Makes sure that it is not splitting lines in the middle of words.
 fn prettyprint (book:String, chapter: String, verse: String) {
     let mut counter = book.len() + chapter.len() + 2;
-    let mut split = verse.split_whitespace();
+    let split = verse.split_whitespace();
     print!("{} {}:", book, chapter);
 
     for next_word in split {
