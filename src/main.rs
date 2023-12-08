@@ -5,6 +5,7 @@ use std::io::BufReader;
 use std::collections::HashMap;
 use std::io::Write;
 use std::fs::OpenOptions;
+use std::str::SplitWhitespace;
 
 fn main () {
     let mut book_abbreviations: HashMap<String, String> = HashMap::new();
@@ -12,7 +13,7 @@ fn main () {
     let bible_abbreviations_filename: &str = "Bible_Abbreviations.csv";
     let file = File::open(bible_abbreviations_filename).expect("Failed to open file");
 
-    let mut verse_file = OpenOptions::new().write(true)
+    let mut verse_file = OpenOptions::new().truncate(true).write(true)
     .open("verses.txt").expect("Failed to open verses.txt");
 
     let reader = BufReader::new(file);
@@ -47,6 +48,9 @@ fn main () {
             let interim_variable = book_abbreviations.get(&book);
             book = interim_variable.unwrap().to_string();
         }
+
+        let mut just_book = book.trim().to_owned();
+        let mut just_chapter = chapter.trim().to_owned();
 
         book = "THE BOOK OF ".to_owned() + &book;
         
@@ -90,8 +94,10 @@ fn main () {
             else if chap_found && &unwrapped[..line_verse] == verse {
                 verse_found = true;
                 println!("\nThe verse requested was:");
-                println!("{}", unwrapped);
-                write!(verse_file, "{}", unwrapped).expect("Error writing to verses.txt");
+                // println!("{} {}:{}", just_book, just_chapter, unwrapped);
+                prettyprint(just_book.to_owned(),just_chapter.to_owned(),unwrapped.to_owned());
+                write!(verse_file, "{} {}:{}", just_book, just_chapter, unwrapped)
+                .expect("Error writing to verses.txt");
                 write!(verse_file,"\n").expect("Error writing to verses.txt");
                 //To do:
                 //Format the terminal output to "pretty print" it
@@ -136,4 +142,20 @@ fn main () {
         }
         
     }
+}
+
+fn prettyprint (book:String, chapter: String, verse: String) {
+    let mut counter = book.len() + chapter.len() + 2;
+    let mut split = verse.split_whitespace();
+    print!("{} {}:", book, chapter);
+
+    for next_word in split {
+        counter += next_word.len();
+        if counter > 80 {
+            println!();
+            counter = next_word.len();
+        }
+        print!("{} ", next_word);
+    }
+    println!();
 }
