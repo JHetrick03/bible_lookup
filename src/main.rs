@@ -4,6 +4,7 @@ use std::io::BufRead;
 use std::io::BufReader;
 use std::collections::HashMap;
 use std::io::Write;
+
 //use std::thread::yield_now;
 
 fn main () {
@@ -112,26 +113,28 @@ fn main () {
             // Error cases
             else if book_found && !chap_found && unwrapped.len() >= 11 {
                 if &unwrapped[..11] == "THE BOOK OF" {
-                    println!("ERROR: This chapter does not exist!");
                     break;
                 }
             }
             else if chap_found && !verse_found && &unwrapped[..5] == "PSALM" {
-                println!("ERROR: This verse does not exist!");
                 break;
             }
             else if chap_found && !verse_found && &unwrapped[..7] == "CHAPTER" {
-                println!("ERROR: This verse does not exist!");
                 break;
             }
             //Rev. 23:1 and Rev. 22:22 return NOTHING (create an error case for this)
         }
 
-        // Book error case
+        // Error cases
         if !book_found {
             println!("ERROR: This book does not exist!");
         }
-
+        else if !chap_found {
+            println!("ERROR: This chapter does not exist!");
+        }
+        else if !verse_found {
+            println!("ERROR: This verse does not exist!");
+        }
         
         // checking if do again
         println!("\nWould you like to continue? Y/N ");
