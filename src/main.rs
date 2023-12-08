@@ -4,7 +4,7 @@ use std::io::BufRead;
 use std::io::BufReader;
 use std::collections::HashMap;
 use std::io::Write;
-use std::thread::yield_now;
+//use std::thread::yield_now;
 
 fn main () {
 	// println!("Please enter a verse:");
@@ -56,11 +56,11 @@ fn main () {
         
         let mut psalm = "PSALM ".to_owned() + &chapter;
         psalm = psalm.trim().to_owned();
-        let psalm_len = psalm.len();
+        //let psalm_len = psalm.len();
 
         chapter = "CHAPTER ".to_owned() + &chapter;
         chapter = chapter.trim().to_owned();
-        let chap_len = chapter.len();
+        //let chap_len = chapter.len(); //I don't think this is ever read
 
         verse = verse.trim().to_owned();
         let line_verse = verse.len();
@@ -88,7 +88,7 @@ fn main () {
                 chap_found = true;
             }
             // psalm is found?
-            else if book_found && unwrapped == psalm {
+            else if book_found && unwrapped == psalm { //Psalms 3:5 works, but Psalm 3:5 doesn't
                 chap_found = true;
             }
             
@@ -124,6 +124,7 @@ fn main () {
                 println!("ERROR: This verse does not exist!");
                 break;
             }
+            //Rev. 23:1 and Rev. 22:22 return NOTHING (create an error case for this)
         }
 
         // Book error case
